@@ -42,5 +42,5 @@ io.sockets.on('connection', function (socket) {
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/views/index.html');
 });
-
-server.listen(3000);
+var port = process.env.PORT || 3000;
+server.listen(port);

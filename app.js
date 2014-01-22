@@ -26,6 +26,7 @@ io.sockets.on('connection', function(socket) {
   var index = clients.push(socket) - 1;
   socket.emit('news', { text: 'Hello World' });
   socket.on('message', function(data) {
+    console.info("received message, sending", data.text)
     sendMessages(data.text);
   });
   socket.on("disconnect", function() {

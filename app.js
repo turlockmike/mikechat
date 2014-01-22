@@ -1,42 +1,27 @@
-/**
- * Module dependencies.
- */
-
-var express = require('express')
-  , app = express()
-  , server = require('http').createServer(app)
-  , routes = require('./routes')
-  , path = require('path')
-  , io = require('socket.io').listen(server);
-
-var clients = [];
-
-var sendMessages = function(msg) {
-  for (var i = 0; i < clients.length; i++) {
-    clients[i].emit('news', { text: msg});
-  }
-};
-
-io.configure(function() {
-  io.set("transports", ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling']);
-  io.set("polling duration", 10);
-});
-
-io.sockets.on('connection', function(socket) {
-  var index = clients.push(socket) - 1;
-  socket.emit('news', { text: 'Hello World' });
-  socket.on('message', function(data) {
-    console.info("received message, sending", data.text)
-    sendMessages(data.text);
-  });
-  socket.on("disconnect", function() {
-    clients.splice(index, 1);
-  });
-
-});
-
-app.get('/', function(req, res) {
-  res.sendfile(__dirname + '/views/index.html');
-});
+var express = require("express");
+var app = express();
 var port = process.env.PORT || 3000;
-server.listen(port);
+
+
+app.configure(function() {
+  app.set('views', __dirname + '/views');
+  app.set('view engine', "jade");
+  app.engine('jade', require('jade').__express);
+  app.use(express.static(__dirname + '/public'));
+})
+
+app.get("/", function(req, res){
+  res.render("index");
+});
+
+var io = require('socket.io').listen(app.listen(port));
+
+io.sockets.on('connection', function (socket) {
+  console.info("connected")
+  socket.emit('message', { message: 'Welcome to Chat' });
+  socket.on('send', function (data) {
+    io.sockets.emit('message', data);
+  });
+});
+
+console.log("Listening on port " + port);

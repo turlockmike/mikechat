@@ -4,5 +4,11 @@
  */
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
+  res.send("test")
+//  res.render('index', { title: 'Mike Chat' });
 };
+
+exports.show = function(req, res, slug) {
+  res.send("test")
+//  res.render('show', {title: "Chat Room" + slug});
+}

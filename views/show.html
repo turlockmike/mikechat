@@ -1,0 +1,24 @@
+<div class="new-message-container">
+  <input type="text" class="new-message-text" />
+</div>
+
+<div class="messages">
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io.connect('/');
+  socket.on('news', function (data) {
+    var incMsg = $("<div class='message'></div>").html(data.text)
+    $(".messages").append(incMsg);
+  });
+  $(".new-message-text").keypress(function (e) {
+    console.log("keypress");
+    if (e.which == 13) {
+      socket.emit('message', { text: $(this).val()  });
+      $(this).val("");
+    }
+  });
+
+</script>

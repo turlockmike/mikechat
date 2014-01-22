@@ -29,7 +29,9 @@ $(document).ready(function() {
       messages.push(data);
       var html = '';
       for(var i=0; i<messages.length; i++) {
-        html += '<b style="color: '+nameColor(messages[i].username)+' ;">' + (messages[i].username ? messages[i].username : 'Server') + ': </b>';
+        if (messages[i].username) {
+          html += '<b style="color: '+nameColor(messages[i].username)+' ;">' + messages[i].username + ': </b>';
+        }
         html += messages[i].message + '<br />';
       }
       content.innerHTML = html;

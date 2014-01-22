@@ -6,12 +6,30 @@ $(document).ready(function() {
   var content = document.getElementById("content");
   var name = document.getElementById("name");
 
+  function toInt(str) {
+    str = str || '';
+    var int = 0;
+    for(var i=0;i<str.length;i++) {
+      int += str.charCodeAt(i);
+    }
+    return int;
+  };
+
+
+
+  function nameColor(name) {
+    var colors = ["red", "green", "blue", "pink", "purple", "brown", "DarkGreen", "DarkOrange", "Fuchsia", "Orange"];
+    var l = colors.length;
+    return colors[(toInt(name) % l)]
+  }
+
+
   socket.on('message', function (data) {
     if(data.message) {
       messages.push(data);
       var html = '';
       for(var i=0; i<messages.length; i++) {
-        html += '<b>' + (messages[i].username ? messages[i].username : 'Server') + ': </b>';
+        html += '<b style="color: '+nameColor(messages[i].username)+' ;">' + (messages[i].username ? messages[i].username : 'Server') + ': </b>';
         html += messages[i].message + '<br />';
       }
       content.innerHTML = html;

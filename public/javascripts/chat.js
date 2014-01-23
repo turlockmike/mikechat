@@ -4,18 +4,17 @@ $(document).ready(function() {
   var field = document.getElementById("field");
   var sendButton = document.getElementById("send");
   var content = document.getElementById("content");
+  var usersDiv = document.getElementById("users");
   var name = document.getElementById("name");
 
   function toInt(str) {
     str = str || '';
     var int = 0;
-    for(var i=0;i<str.length;i++) {
+    for (var i = 0; i < str.length; i++) {
       int += str.charCodeAt(i);
     }
     return int;
   };
-
-
 
   function nameColor(name) {
     var colors = ["red", "green", "blue", "pink", "purple", "brown", "DarkGreen", "DarkOrange", "Fuchsia", "Orange"];
@@ -23,14 +22,13 @@ $(document).ready(function() {
     return colors[(toInt(name) % l)]
   }
 
-
-  socket.on('message', function (data) {
-    if(data.message) {
+  socket.on('message', function(data) {
+    if (data.message) {
       messages.push(data);
       var html = '';
-      for(var i=0; i<messages.length; i++) {
+      for (var i = 0; i < messages.length; i++) {
         if (messages[i].username) {
-          html += '<b style="color: '+nameColor(messages[i].username)+' ;">' + messages[i].username + ': </b>';
+          html += '<b style="color: ' + nameColor(messages[i].username) + ' ;">' + messages[i].username + ': </b>';
         }
         html += messages[i].message + '<br />';
       }
@@ -41,8 +39,23 @@ $(document).ready(function() {
     }
   });
 
+  socket.on("users_updated", function(data) {
+    if (data.users) {
+      var users = []
+      data.users.forEach(function(user) {
+        if (user.username) {
+          users.push("<span style='color: "+nameColor(user.username)+"'>"+user.username+"</span>");
+        } else {
+          users.push("Guest")
+        }
+      })
+      var html = users.join(", ")
+      usersDiv.innerHTML = html;
+    }
+  })
+
   sendButton.onclick = sendMessage = function() {
-    if(name.value == "") {
+    if (name.value == "") {
       alert("Please type your name!");
     } else {
       var text = field.value;
@@ -52,7 +65,7 @@ $(document).ready(function() {
   };
 
   $("#field").keyup(function(e) {
-    if(e.keyCode == 13) {
+    if (e.keyCode == 13) {
       sendMessage();
     }
   });

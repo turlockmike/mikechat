@@ -34,6 +34,7 @@ io.sockets.on('connection', function(socket) {
   io.sockets.emit("users_updated", {users: users()});
   socket.on('send', function(data) {
     if (socket.username != data.username) {
+      socket.broadcast.emit("message", {message: (socket.username || "Someone") + " has changed their nickname to " + data.username})
       socket.username = data.username;
       io.sockets.emit("users_updated", {users: users()});
     }
@@ -43,6 +44,14 @@ io.sockets.on('connection', function(socket) {
       socket.emit("error", {message: "Username Required"});
     }
   });
+  socket.on("name_updated", function(data) {
+    if (socket.username != data.username) {
+      socket.broadcast.emit("message", {message: (socket.username || "Someone") + " has changed their nickname to " + data.username})
+      socket.username = data.username;
+      io.sockets.emit("users_updated", {users: users()});
+    }
+  })
+
   socket.on("disconnect", function() {
     io.sockets.emit("message", {message: (socket.username || "Someone") + " has left the room"})
     io.sockets.emit("users_updated", {users: users()});

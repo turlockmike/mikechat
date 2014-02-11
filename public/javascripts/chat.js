@@ -73,9 +73,19 @@ $(document).ready(function() {
     }
   };
 
+  updateName = function() {
+    if (name.value != "") {
+     socket.emit('name_updated', {username: name.value});
+    }
+  }
+
   $("#field").keyup(function(e) {
     if (e.keyCode == 13) {
       sendMessage();
     }
   });
+  $("#name").on("change", function(e) {
+    updateName();
+  })
+
 });
